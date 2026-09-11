@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For You ❤️</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0a0510;
+            color: #f0e6d3;
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: rgba(212, 175, 55, 0.3);
+            color: #f4c2c2;
+        }
+
+        /* ========== LOADING SCREEN ========== */
+        .loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0a0510;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-heart {
+            font-size: 3rem;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.2); }
+            60% { transform: scale(1); }
+        }
+
+        /* ========== STARFIELD BACKGROUND ========== */
+        .starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.5); }
+        }
+
+        /* ========== FLOATING HEARTS ========== */
+        .hearts-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .float-heart {
+            position: absolute;
+            opacity: 0;
+            animation: floatUp linear infinite;
+            filter: blur(0.5px);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            5% { opacity: 0.12; }
+            50% {
+                transform: translateY(50vh) translateX(30px) rotate(180deg) scale(1);
+                opacity: 0.12;
+            }
+            95% { opacity: 0.08; }
+            100% {
+                transform: translateY(-10vh) translateX(-20px) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* ========== AMBIENT GLOW ========== */
+        .ambient-glow {
+            position: fixed;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-1 {
+            top: -200px; left: -200px;
+            background: rgba(139, 0, 50, 0.08);
+            animation: glowDrift1 20s ease-in-out infinite;
+        }
+
+        .glow-2 {
+            bottom: -200px; right: -200px;
+            background: rgba(212, 175, 55, 0.06);
+            animation: glowDrift2 25s ease-in-out infinite;
+        }
+
+        @keyframes glowDrift1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(100px, 100px); }
+        }
+
+        @keyframes glowDrift2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-80px, -80px); }
+        }
+
+        /* ========== SECTIONS ========== */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content {
+            max-width: 650px;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero-greeting {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.8rem, 8vw, 5rem);
+            color: #d4af37;
+            opacity: 0;
+            animation: revealText 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+            text-shadow:
+                0 0 40px rgba(212, 175, 55, 0.25),
+                0 0 80px rgba(212, 175, 55, 0.1);
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            color: #f4c2c2;
+            margin-top: 1.5rem;
+            opacity: 0;
+            animation: revealText 2s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
+            letter-spacing: 0.05em;
+        }
+
+        .scroll-indicator {
+            margin-top: 4rem;
+            opacity: 0;
+            animation: revealText 1.5s ease 3s forwards;
+        }
+
+        .scroll-arrow {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid rgba(212, 175, 55, 0.5);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.5);
+            transform: rotate(45deg);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.5; }
+            50% { transform: rotate(45deg) translate(5px, 5px); opacity: 1; }
+        }
+
+        /* ========== MESSAGE SECTIONS ========== */
+        .message {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.15rem, 3.5vw, 1.55rem);
+            line-height: 2.2;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            color: #d4af37;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .rose {
+            color: #f4c2c2;
+            font-style: italic;
+        }
+
+        .whisper {
+            color: rgba(240, 230, 211, 0.5);
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        /* ========== DECORATIVE DIVIDER ========== */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2.5rem auto;
+            width: 200px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+        }
+
+        .divider-icon {
+            color: #d4af37;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* ========== PROPOSAL SECTION ========== */
+        .proposal-ring {
+            font-size: clamp(3rem, 8vw, 5rem);
+            display: inline-block;
+            animation: ringFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+        }
+
+        @keyframes ringFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        .proposal-question {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            color: #d4af37;
+            margin: 2rem 0 3rem;
+            text-shadow:
+                0 0 30px rgba(212, 175, 55, 0.3),
+                0 0 60px rgba(212, 175, 55, 0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .proposal-question.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== BUTTONS ========== */
+        .buttons-container {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 120px;
+            flex-wrap: wrap;
+        }
+
+        .btn-yes {
+            padding: 1.1rem 3.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #d4af37 0%, #e8c547 50%, #d4af37 100%);
+            background-size: 200% 200%;
+            border: none;
+            border-radius: 50px;
+            color: #0a0510;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow:
+                0 4px 15px rgba(212, 175, 55, 0.3),
+                0 0 40px rgba(212, 175, 55, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: shimmer 3s ease-in-out infinite, yesGlow 2s ease-in-out infinite;
+            letter-spacing: 0.05em;
+            position: relative;
+            z-index: 5;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes yesGlow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3), 0 0 40px rgba(212, 175, 55, 0.15); }
+            50% { box-shadow: 0 4px 25px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.25); }
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.08);
+            box-shadow:
+                0 6px 30px rgba(212, 175, 55, 0.5),
+                0 0 60px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-yes:active {
+            transform: scale(0.98);
+        }
+
+        .btn-no {
+            padding: 0.7rem 1.8rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            font-weight: 300;
+            background: transparent;
+            border: 1px solid rgba(244, 194, 194, 0.2);
+            border-radius: 50px;
+            color: rgba(244, 194, 194, 0.4);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            z-index: 5;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ========== CELEBRATION ========== */
+        .celebration {
+            display: none;
+            text-align: center;
+        }
+
+        .celebration.active {
+            display: block;
+            animation: revealText 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .celebration-emoji {
+            font-size: 4rem;
+            animation: celebrateEmoji 2s ease-in-out infinite;
+        }
+
+        @keyframes celebrateEmoji {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .celebration-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: #d4af37;
+            margin: 1.5rem 0;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .celebration-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #f4c2c2;
+            font-style: italic;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        .seal-hint {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(240, 230, 211, 0.5);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .seal-btn {
+            padding: 1.2rem 3rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #f4c2c2 0%, #d4af37 100%);
+            border: none;
+            border-radius: 50px;
+            color: #0a0510;
+            cursor: pointer;
+            animation: pulse 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+            box-shadow:
+                0 4px 20px rgba(244, 194, 194, 0.3),
+                0 0 40px rgba(212, 175, 55, 0.15);
+            transition: all 0.3s ease;
+            letter-spacing: 0.03em;
+        }
+
+        .seal-btn:hover {
+            transform: scale(1.06);
+            box-shadow:
+                0 6px 30px rgba(244, 194, 194, 0.5),
+                0 0 60px rgba(212, 175, 55, 0.25);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* ========== FINAL SECTION ========== */
+        .final-section {
+            display: none;
+        }
+
+        .final-section.active {
+            display: flex;
+            animation: revealText 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .final-greeting {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.5rem, 7vw, 4rem);
+            color: #d4af37;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.25);
+            margin-bottom: 1.5rem;
+        }
+
+        .final-message {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: #f4c2c2;
+            font-style: italic;
+            line-height: 2;
+            margin-top: 1.5rem;
+        }
+
+        .final-emoji {
+            font-size: 3rem;
+            margin-top: 2rem;
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        /* ========== CONFETTI CANVAS ========== */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ========== MUSIC TOGGLE ========== */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .music-toggle:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        /* ========== SPOILER IMAGE ========== */
+        .spoiler-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 2.5rem;
+            cursor: pointer;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            max-width: 90%;
+            transition: border-color 0.6s ease, box-shadow 0.6s ease;
+        }
+
+        .spoiler-container:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .spoiler-container.revealed {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.25);
+            cursor: default;
+        }
+
+        .spoiler-img {
+            display: block;
+            max-width: 100%;
+            max-height: 70vh;
+            width: auto;
+            height: auto;
+            filter: blur(30px) brightness(0.4);
+            transform: scale(1.1);
+            transition: filter 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .spoiler-container.revealed .spoiler-img {
+            filter: blur(0) brightness(1);
+            transform: scale(1);
+        }
+
+        .spoiler-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 5, 16, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            z-index: 2;
+        }
+
+        .spoiler-container.revealed .spoiler-overlay {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spoiler-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        .spoiler-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            color: #d4af37;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .spoiler-sublabel {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: rgba(244, 194, 194, 0.6);
+            font-style: italic;
+            margin-top: 0.4rem;
+        }
+
+        .contract-caption {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: rgba(240, 230, 211, 0.5);
+            font-style: italic;
+            margin-top: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.5s;
+        }
+
+        .spoiler-container.revealed ~ .contract-caption {
+            opacity: 1;
+        }
+
+        /* ========== GENERAL ANIMATIONS ========== */
+        @keyframes revealText {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 600px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn-yes {
+                padding: 1rem 3rem;
+            }
+        }
+
+        /* ========== PAGE TRANSITION ========== */
+        .page-transition {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, #0a0510 70%);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .page-transition.flash {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading screen -->
+    <div class="loader" id="loader">
+        <div class="loader-heart">💌</div>
+    </div>
+
+    <!-- Page transition overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- Background layers -->
+    <div class="starfield" id="starfield"></div>
+    <div class="hearts-bg" id="heartsBg"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Confetti canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- ===== SECTION 1: HERO ===== -->
+    <div class="section" id="s-hero">
+        <div class="content">
+            <h1 class="hero-greeting">Hi, Love of My Life</h1>
+            <p class="hero-subtitle">I need you to read this — all of it.</p>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 2: MESSAGE ===== -->
+    <div class="section" id="s-msg1">
+        <div class="content">
+            <p class="message" data-reveal>
+                Did you really think<br>
+                I would <span class="highlight">ever</span> give up on you?
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 3: MESSAGE ===== -->
+    <div class="section" id="s-msg2">
+        <div class="content">
+            <p class="message" data-reveal>
+                You can't run from this —<br>
+                <span class="rose">you never could,</span><br>
+                and you <span class="highlight">never</span> will.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 4: MESSAGE ===== -->
+    <div class="section" id="s-msg3">
+        <div class="content">
+            <p class="message" data-reveal>
+                If I've kept <span class="highlight">every single promise</span><br>
+                I ever made to you,<br>
+                then why would I ever stop now?
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 5: MESSAGE ===== -->
+    <div class="section" id="s-msg4">
+        <div class="content">
+            <p class="message" data-reveal>
+                I even spoke with your brother.<br>
+                <span class="whisper">I can't say too much here...</span><br>
+                but just know —<br>
+                <span class="highlight">everything is falling into place.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 6: TRANSITION ===== -->
+    <div class="section" id="s-transition">
+        <div class="content">
+            <p class="message" data-reveal>
+                <span class="rose">Now...</span><br>
+                I have <span class="highlight">one more thing</span><br>
+                to ask you.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 7: PROPOSAL ===== -->
+    <div class="section" id="s-proposal">
+        <div class="content">
+            <!-- Proposal content -->
+            <div id="proposalContent">
+                <div class="proposal-ring">💍</div>
+                <div class="divider"><span class="divider-icon">♥</span></div>
+                <div class="proposal-question" data-reveal>Will You Marry Me?</div>
+                <div class="buttons-container" id="buttonsContainer">
+                    <button class="btn-yes" id="btnYes">Yes, Forever! 💕</button>
+                    <button class="btn-no" id="btnNo">No</button>
+                </div>
+            </div>
+
+            <!-- Celebration (hidden initially) -->
+            <div class="celebration" id="celebration">
+                <div class="celebration-emoji">💍✨</div>
+                <h2 class="celebration-title">I Knew You'd Say Yes!</h2>
+                <p class="celebration-text">
+                    You just made me the happiest person<br>
+                    in the entire universe. ❤️
+                </p>
+                <div class="divider"><span class="divider-icon">♥</span></div>
+                <p class="seal-hint">One last thing... just to make it official 👀</p>
+                <button class="seal-btn" id="sealBtn">🤙 Pinky Promise</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 8: FINAL ===== -->
+    <div class="section final-section" id="s-final">
+        <div class="content">
+            <div class="final-greeting">Forever & Always</div>
+            <div class="divider"><span class="divider-icon">∞</span></div>
+            <p class="final-message">
+                No matter the distance,<br>
+                no matter the obstacles —<br>
+                I will <span class="highlight">always</span> find my way back to you.
+            </p>
+            <div class="final-emoji">❤️‍🔥</div>
+
+            <!-- Contract with spoiler -->
+            <div style="margin-top: 4rem;">
+                <div class="divider"><span class="divider-icon">📜</span></div>
+                <p class="message visible" style="color: #f4c2c2; font-style: italic; font-size: 1.1rem; margin-bottom: 0.5rem;">
+                    Remember this?
+                </p>
+                <p class="whisper" style="margin-bottom: 1rem; font-size: 0.95rem;">
+                    A promise we made — still unbroken.
+                </p>
+
+                <div class="spoiler-container" id="spoilerContainer" onclick="revealSpoiler()">
+                    <div class="spoiler-overlay" id="spoilerOverlay">
+                        <div class="spoiler-icon">👀</div>
+                        <div class="spoiler-label">Tap to Reveal</div>
+                        <div class="spoiler-sublabel">our contract</div>
+                    </div>
+                    <img src="contract.jpg" alt="Our Contract" class="spoiler-img" id="spoilerImg">
+                </div>
+                <p class="contract-caption" id="contractCaption">Some things are written in stone... or in ink. 💛</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    // =========================================================
+    //  🔔  N O T I F I C A T I O N   C O N F I G
+    // =========================================================
+    //
+    //  Pick ONE method and fill it in. See README.md for help.
+    //
+    //  OPTION A — Webhook.site (easiest, instant)
+    //     Go to https://webhook.site → copy your unique URL
+    const WEBHOOK_URL = 'YOUR_WEBHOOK_URL_HERE';
+    //
+    //  OPTION B — Telegram Bot
+    //     Create a bot with @BotFather, get your chat ID
+    const TELEGRAM_BOT_TOKEN = '8616446271:AAEDy3xGUb6BKKj3cmPC3Bb6LsTl-fSTTmA';
+    const TELEGRAM_CHAT_ID   = '8845531824';
+    //
+    // =========================================================
+
+
+    // ---------- silent notifier ----------
+    function notify(event) {
+        const ts   = new Date().toLocaleString();
+        const data = { event, time: ts };
+
+        // Webhook
+        if (WEBHOOK_URL && WEBHOOK_URL !== 'YOUR_WEBHOOK_URL_HERE') {
+            navigator.sendBeacon?.(WEBHOOK_URL, JSON.stringify(data))
+                || fetch(WEBHOOK_URL, {
+                       method: 'POST',
+                       body: JSON.stringify(data),
+                       mode: 'no-cors',
+                       keepalive: true
+                   }).catch(() => {});
+        }
+
+        // Telegram
+        if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+            const icons = {
+                open:  '📬',
+                no:    '😏',
+                yes:   '💍',
+                seal:  '💋',
+                scroll:'👀'
+            };
+            const icon = Object.entries(icons).find(([k]) => event.toLowerCase().includes(k))?.[1] || '💌';
+            const msg  = `${icon}  <b>Love Letter</b>\n\n${event}\n🕐 ${ts}`;
+            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: msg,
+                    parse_mode: 'HTML'
+                })
+            }).catch(() => {});
+        }
+    }
+
+
+    // =========================================================
+    //  S T A R F I E L D
+    // =========================================================
+    (function createStars() {
+        const field = document.getElementById('starfield');
+        const count = Math.min(window.innerWidth / 4, 120);
+        for (let i = 0; i < count; i++) {
+            const s   = document.createElement('div');
+            s.className = 'star';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top  = Math.random() * 100 + '%';
+            s.style.animationDuration = (Math.random() * 4 + 2) + 's';
+            s.style.animationDelay    = Math.random() * 4 + 's';
+            s.style.width = s.style.height = (Math.random() * 2 + 1) + 'px';
+            field.appendChild(s);
+        }
+    })();
+
+
+    // =========================================================
+    //  F L O A T I N G   H E A R T S
+    // =========================================================
+    const heartsBg    = document.getElementById('heartsBg');
+    const heartGlyphs = ['❤️','💕','✨','💫','🌹','💗','💖'];
+
+    function spawnHeart() {
+        const h = document.createElement('span');
+        h.className = 'float-heart';
+        h.textContent = heartGlyphs[Math.random() * heartGlyphs.length | 0];
+        h.style.left = Math.random() * 100 + '%';
+        h.style.fontSize = (Math.random() * 1.2 + 0.6) + 'rem';
+        const dur = Math.random() * 12 + 14;
+        h.style.animationDuration = dur + 's';
+        h.style.animationDelay   = Math.random() * 3 + 's';
+        heartsBg.appendChild(h);
+        setTimeout(() => h.remove(), (dur + 4) * 1000);
+    }
+
+    for (let i = 0; i < 12; i++) setTimeout(spawnHeart, i * 400);
+    setInterval(spawnHeart, 2500);
+
+
+    // =========================================================
+    //  L O A D E R
+    // =========================================================
+    window.addEventListener('load', () => {
+        setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1600);
+        notify('📬 She opened the page!');
+    });
+
+
+    // =========================================================
+    //  S C R O L L   R E V E A L
+    // =========================================================
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.35 });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    // Scroll-depth tracker (fire once when they reach the proposal)
+    let scrollNotified = false;
+    const proposalObserver = new IntersectionObserver((entries) => {
+        if (!scrollNotified && entries[0].isIntersecting) {
+            scrollNotified = true;
+            notify('👀 She scrolled all the way to the proposal!');
+        }
+    }, { threshold: 0.3 });
+    proposalObserver.observe(document.getElementById('s-proposal'));
+
+
+    // =========================================================
+    //  D O D G I N G   N O   B U T T O N
+    // =========================================================
+    const btnNo = document.getElementById('btnNo');
+    let noDodges = 0;
+
+    function dodgeNo(e) {
+        if (e) e.preventDefault();
+        noDodges++;
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const pad = 60;
+
+        // Random position on screen
+        let nx = Math.random() * (vw - pad * 2) + pad;
+        let ny = Math.random() * (vh - pad * 2) + pad;
+
+        btnNo.style.position = 'fixed';
+        btnNo.style.left = nx + 'px';
+        btnNo.style.top  = ny + 'px';
+        btnNo.style.transition = 'all 0.18s ease-out';
+        btnNo.style.zIndex = '10';
+
+        // Shrink after several tries
+        if (noDodges > 4) {
+            const s = Math.max(0.25, 1 - (noDodges - 4) * 0.12);
+            btnNo.style.transform = `scale(${s})`;
+            btnNo.style.opacity   = Math.max(0.15, 1 - (noDodges - 4) * 0.15);
+        }
+
+        // Disappear
+        if (noDodges > 8) {
+            btnNo.style.opacity = '0';
+            btnNo.style.pointerEvents = 'none';
+            setTimeout(() => btnNo.remove(), 400);
+        }
+
+        notify(`😏 She tried to press No (attempt #${noDodges})`);
+    }
+
+    btnNo.addEventListener('pointerenter', dodgeNo);
+    btnNo.addEventListener('pointerdown',  dodgeNo);
+    btnNo.addEventListener('touchstart', dodgeNo, { passive: false });
+    btnNo.addEventListener('click', dodgeNo);
+
+
+    // =========================================================
+    //  Y E S   B U T T O N
+    // =========================================================
+    document.getElementById('btnYes').addEventListener('click', () => {
+        notify('💍 SHE SAID YES!!!  💍');
+
+        // Remove dodging No button if still alive
+        btnNo.remove();
+
+        // Transition
+        const overlay = document.getElementById('pageTransition');
+        overlay.classList.add('flash');
+        setTimeout(() => overlay.classList.remove('flash'), 900);
+
+        // Show celebration
+        setTimeout(() => {
+            document.getElementById('proposalContent').style.display = 'none';
+            document.getElementById('celebration').classList.add('active');
+            launchConfetti();
+        }, 500);
+    });
+
+
+    // =========================================================
+    //  S E A L   B U T T O N  (Read-receipt)
+    // =========================================================
+    document.getElementById('sealBtn').addEventListener('click', function () {
+        notify('🤙 She pinky promised — she read everything!');
+
+        this.textContent = '🤝 Promised Forever';
+        this.style.background = 'linear-gradient(135deg, #d4af37, #f4c2c2)';
+        this.style.animation  = 'none';
+        this.style.cursor     = 'default';
+        this.onclick = null;
+
+        launchConfetti();
+
+        setTimeout(() => {
+            const fin = document.getElementById('s-final');
+            fin.classList.add('active');
+            fin.scrollIntoView({ behavior: 'smooth' });
+        }, 1800);
+    });
+
+
+    // =========================================================
+    //  S P O I L E R   R E V E A L  (Contract image)
+    // =========================================================
+    let spoilerRevealed = false;
+
+    function revealSpoiler() {
+        if (spoilerRevealed) return;
+        spoilerRevealed = true;
+
+        const container = document.getElementById('spoilerContainer');
+        container.classList.add('revealed');
+
+        notify('📜 She tapped to reveal the contract!');
+
+        // Show caption
+        document.getElementById('contractCaption').style.opacity = '1';
+    }
+
+
+    // =========================================================
+    //  C O N F E T T I
+    // =========================================================
+    const cvs = document.getElementById('confetti-canvas');
+    const ctx = cvs.getContext('2d');
+    let pieces = [], isAnimating = false;
+
+    function sizeCanvas() { cvs.width = innerWidth; cvs.height = innerHeight; }
+    addEventListener('resize', sizeCanvas);
+    sizeCanvas();
+
+    function launchConfetti() {
+        const palette = ['#d4af37','#f4c2c2','#ff6b8a','#ffd700','#ff69b4','#fff','#e8c547'];
+        for (let i = 0; i < 180; i++) {
+            pieces.push({
+                x:  Math.random() * cvs.width,
+                y:  Math.random() * -cvs.height * 0.5,
+                vx: (Math.random() - 0.5) * 10,
+                vy: Math.random() * 4 + 2,
+                w:  Math.random() * 10 + 5,
+                h:  Math.random() * 6 + 3,
+                color: palette[Math.random() * palette.length | 0],
+                rot: Math.random() * 360,
+                rv:  (Math.random() - 0.5) * 12,
+                life: 1
+            });
+        }
+        if (!isAnimating) { isAnimating = true; drawConfetti(); }
+    }
+
+    function drawConfetti() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        pieces = pieces.filter(p => {
+            p.x    += p.vx;
+            p.y    += p.vy;
+            p.vy   += 0.06;
+            p.vx   *= 0.99;
+            p.rot  += p.rv;
+            p.life -= 0.004;
+            if (p.life <= 0 || p.y > cvs.height + 20) return false;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle   = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+            return true;
+        });
+        if (pieces.length) requestAnimationFrame(drawConfetti);
+        else isAnimating = false;
+    }
+
+    </script>
+</body>
+</html>
